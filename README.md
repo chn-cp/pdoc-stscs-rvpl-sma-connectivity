@@ -96,44 +96,50 @@ Common variables include:
 - `RVPL_SMA_PRIOR_SUBMISSION_DIR`
 - `RVPL_SMA_VALIDATION_OUTPUT`
 - `RVPL_SMA_VERIFICATION_OUTPUT`
-- `RVPL_SMA_SENSITIVITY_OUTPUT`
-- `RVPL_SMA_RESTRICTED_INPUTS`
+- `FIRTH_ACCELERATOR_LIB`
+- `RTOOLS_BIN` (Windows, optional)
+- `JULICH_ATLAS_ROOT`
+- `BRAINNET_SURFACE_ROOT`
 
-## Reproducibility
+## Analysis map
 
-Because participant-level clinical and MRI data cannot be publicly redistributed, the complete
-patient-level workflow cannot be executed from this repository alone. The repository is
-intended to make the study-specific algorithms, statistical procedures, parameter choices,
-figure-generation code and numerical-verification logic inspectable and reusable.
+| Manuscript component | Primary public script(s) |
+|---|---|
+| ROI/connectivity and focused-edge algorithms | `src/primary/` |
+| Statistical validation and uniform residual permutation | `src/statistics/statistical_validation.py` |
+| Firth numerical accelerator | `src/statistics/firth_accelerator.cpp` |
+| Preprocessing-provenance sensitivity | `src/sensitivity/preprocessing_provenance_sensitivity.py` |
+| Numerical/reconstruction verification | `src/verification/` |
+| Figure 1 | `src/figures/figure1_outcome_guided.py` |
+| Robustness/anatomical comparison figure | `src/figures/figure3_robustness_anatomical.py` |
+| SMA/6mp spatial figure | `src/figures/figure4_sma6mp_spatial.py` |
+| Publication figure adapters | `src/figures/validation_figures.py` |
 
-See:
+See `docs/REPRODUCIBILITY.md` for the inferential role and input requirements of each component.
 
-- `docs/REPRODUCIBILITY.md`
-- `docs/DATA_REQUIREMENTS.md`
-- `metadata/source_integrity_manifest.tsv`
-- `metadata/PUBLICATION_QC_REPORT.md`
+## Important reproducibility note
 
-## Release integrity
+Because the participant-level clinical and MRI inputs are restricted, this repository is not
+a one-command public reproduction of all numerical results. It provides the complete
+study-specific code needed to audit the implemented methods and, with institutionally
+approved inputs, rerun the analyses. Aggregate Source Data and Supplementary Data are supplied
+with the manuscript submission.
 
-`SHA256SUMS.txt` contains SHA256 digests for the files in this release. The source-integrity
-manifest links the cleaned public scripts to the staged publication-candidate sources.
+## Privacy and publication safety
 
-The public packaging step changed repository organization, configuration and privacy-sensitive
-I/O behavior where required for safe release. It did not intentionally change the underlying
-statistical methods.
+Do **not** commit patient-level data or restricted clinical archives to this repository.
+The `.gitignore` rules deliberately exclude common private-data, output and compiled-library
+locations. See `docs/DATA_REQUIREMENTS.md`.
 
 ## Citation
 
-If you use this code, please cite the associated article and the archived software release.
-Machine-readable citation metadata are supplied in `CITATION.cff`.
+If you use this code, please cite the accompanying article and this software release.
+Citation metadata are provided in `CITATION.cff`.
 
-A Zenodo DOI will be added after the GitHub release is archived.
+After the GitHub release is archived in Zenodo, cite the Zenodo DOI assigned to release
+**v1.0.0**.
 
 ## License
 
-This code is released under the MIT License. See `LICENSE`.
-
-## Contact
-
-For questions about the study, data access or code, please contact the corresponding authors
-listed in the associated article.
+Code in this repository is released under the **MIT License**. Third-party software, atlases
+and datasets retain their own licences and terms.

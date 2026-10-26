@@ -289,28 +289,18 @@ def main():
     (OUT/'stageE_clinical_summary.json').write_text(json.dumps(summary,indent=2),encoding='utf-8')
     decision='GO' if summary['core_claim_go'] else 'NO-GO / DOWNGRADE'
     (OUT/'STAGEE_REPORT.md').write_text(
-        '# Stage E — locked clinical topology models
-
-'
-        f'- Decision: **{decision}** under the fully prespecified criteria.
-'
-        f"- Source cohorts n={summary['primary_source_cohort_n']}/{summary['strict_source_cohort_n']}; lesion-support-complete analyses n={summary['primary_analysis_n']}/{summary['strict_analysis_n']} (primary events={summary['primary_endpoint_events_analysis']}).
-"
-        f"- Primary feature OR={mainrow.OR:.3f} (Wald 95% CI {mainrow.OR95_low:.3f}–{mainrow.OR95_high:.3f}); residual-permutation P={mainrow.permutation_p:.4g}.
-"
-        f"- Bootstrap same-direction proportion={mainrow.bootstrap_same_direction:.3f}; LOO direction reversals={int(mainrow.loo_direction_reversals)}.
-"
-        f"- Nested-CV median Brier M0/M1={cvrow.median_M0_brier:.3f}/{cvrow.median_M1_brier:.3f}; M1 improves in {cvrow.proportion_M1_brier_better:.3f} of repeats.
-"
-        '- Clinical data remain total-score/state summaries; item-level content specificity is not tested.
-',encoding='utf-8')
+        '# Stage E — locked clinical topology models\n\n'
+        f'- Decision: **{decision}** under the fully prespecified criteria.\n'
+        f"- Source cohorts n={summary['primary_source_cohort_n']}/{summary['strict_source_cohort_n']}; lesion-support-complete analyses n={summary['primary_analysis_n']}/{summary['strict_analysis_n']} (primary events={summary['primary_endpoint_events_analysis']}).\n"
+        f"- Primary feature OR={mainrow.OR:.3f} (Wald 95% CI {mainrow.OR95_low:.3f}–{mainrow.OR95_high:.3f}); residual-permutation P={mainrow.permutation_p:.4g}.\n"
+        f"- Bootstrap same-direction proportion={mainrow.bootstrap_same_direction:.3f}; LOO direction reversals={int(mainrow.loo_direction_reversals)}.\n"
+        f"- Nested-CV median Brier M0/M1={cvrow.median_M0_brier:.3f}/{cvrow.median_M1_brier:.3f}; M1 improves in {cvrow.proportion_M1_brier_better:.3f} of repeats.\n"
+        '- Clinical data remain total-score/state summaries; item-level content specificity is not tested.\n',encoding='utf-8')
     lines=[]
     for path in sorted(OUT.glob('*')):
         if path.name=='SHA256SUMS.txt' or not path.is_file(): continue
         lines.append(f'{sha256(path)}  {path.name}')
-    (OUT/'SHA256SUMS.txt').write_text('
-'.join(lines)+'
-',encoding='utf-8')
+    (OUT/'SHA256SUMS.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     print(json.dumps(summary,indent=2))
 
 

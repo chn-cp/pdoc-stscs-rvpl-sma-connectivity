@@ -26,7 +26,7 @@ WORK = './restricted_inputs/MRI/FCmat_work'; MATDIR = os.path.join(WORK, "patien
 os.makedirs(MATDIR, exist_ok=True)
 SPHERE_MM, MIN_NODE_VOX, LESION_THRESH = 6, 3, 0.30
 
-CORTICAL = [
+CORTICAL = [  # 22 皮层节点(6网络)
  ("Sensorimotor","L.M1",-39,-26,51),("Sensorimotor","R.M1",38,-26,51),("Sensorimotor","SMA",0,-21,51),
  ("Visual","L.V1",-13,-85,6),("Visual","R.V1",8,-82,6),("Visual","L.V4",-30,-89,20),("Visual","R.V4",30,-89,20),
  ("Auditory","L.A1",-62,-30,12),("Auditory","R.A1",59,-27,15),("Auditory","MCC",0,-7,43),
@@ -45,6 +45,7 @@ def resample(s, t, i):
     if 'copy_header' in _RS: kw['copy_header'] = True
     return resample_to_img(s, t, interpolation=i, **kw)
 
+# 30 节点
 ref = nib.load(GROUP_MASK); shape = ref.shape; aff = ref.affine
 invA = np.linalg.inv(aff); vs = np.sqrt((aff[:3, :3]**2).sum(0))
 gi, gj, gk = np.ogrid[:shape[0], :shape[1], :shape[2]]
@@ -66,6 +67,7 @@ pd.DataFrame({'idx': range(N), 'name': names, 'network': nets}).to_csv(os.path.j
                                                                        index=False, encoding='utf-8-sig')
 print(f"节点 N={N}: {names}")
 
+# 逐患者 FC 矩阵
 qc = pd.read_csv(QC_CSV); qc['Subject'] = qc['Subject'].astype(str).str.strip()
 kept = qc[qc['exclude_reason'].astype(str).str.strip().isin(["", "nan"])].copy()
 dcm = pd.read_csv(DELTACRS)[['Subject', 'delta_crs']]
@@ -91,9 +93,10 @@ for _, r in info.iterrows():
         Z[np.ix_(good, good)] = z
     np.save(os.path.join(MATDIR, f"{sub}.npy"), Z); order.append(sub); MATS.append(Z)
     print(f"  {sub}: 完好节点 {len(good)}/{N}")
-MATS = np.array(MATS)
+MATS = np.array(MATS)   # (S, N, N)
 pd.Series(order).to_csv(os.path.join(WORK, "patient_order.csv"), index=False, header=['Subject'])
 
+# 逐边筛选（pairwise-complete）
 grp = np.array([int(info.set_index('Subject').loc[s, 'group']) for s in order])
 dc = np.array([float(info.set_index('Subject').loc[s, 'delta_crs']) for s in order])
 def fdr(p):
@@ -117,13 +120,10 @@ for i in range(N):
 res = pd.DataFrame(rows)
 res['q_resp'] = fdr(res['p_resp_vs_non'].values); res['q_dcrs'] = fdr(res['p_deltaCRS'].fillna(1).values)
 res.to_csv(os.path.join(WORK, "edge_stats.csv"), index=False, encoding='utf-8-sig')
-print(f"
-共 {len(res)} 条可检验边。FDR q<0.05：")
+print(f"\n共 {len(res)} 条可检验边。FDR q<0.05：")
 sig = res[(res['q_resp'] < 0.05) | (res['q_dcrs'] < 0.05)]
 print(sig.to_string(index=False) if len(sig) else "（FDR后无；见未校正候选）")
-print("
-候选边(未校正 p<0.05，双路径第1阶段)：")
+print("\n候选边(未校正 p<0.05，双路径第1阶段)：")
 cand = res[(res['p_resp_vs_non'] < 0.05) | (res['p_deltaCRS'] < 0.05)].sort_values('p_resp_vs_non')
 print(cand[['nodeA', 'nodeB', 'subcortical_edge', 'n', 'p_resp_vs_non', 'rho_deltaCRS', 'p_deltaCRS']].head(25).to_string(index=False))
-print(f"
-矩阵存 {MATDIR}；edge_stats.csv 已存。候选边下一步进贝叶斯 pd 验证(FCMAT_2)。")
+print(f"\n矩阵存 {MATDIR}；edge_stats.csv 已存。候选边下一步进贝叶斯 pd 验证(FCMAT_2)。")

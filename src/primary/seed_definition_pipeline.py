@@ -32,8 +32,8 @@ COVAR_MODELS = [
     ("M4_+motion(full)", ["age", "duration_days", "crs_pre", "mean_fd"]),
 ]
 ALL_COVARS = ["age", "duration_days", "crs_pre", "mean_fd"]
-SUBJECT_SETS = [("main", 0), ("sensitivity", 90)]
-N_SEEDS_FAMILY = 8
+SUBJECT_SETS = [("main", 0), ("sensitivity", 90)]   # 主分析 + 敏感性(保留帧>=90)
+N_SEEDS_FAMILY = 8            # 跨种子校正的族大小(最初检验的种子数)
 CDT_P = 0.001; N_PERM = 5000; FWE_ALPHA = 0.05; RNG_SEED = 2024
 
 rng = np.random.default_rng(RNG_SEED)
@@ -48,7 +48,7 @@ def load_vec(sub, seed):
 
 def clusters(tvec, thr):
     vol = np.zeros(mask3d.shape, np.float32); vol[mask3d] = tvec
-    lab, n = ndimage.label(vol >= thr, structure=struct)
+    lab, n = ndimage.label(vol >= thr, structure=struct)          # 单尾正向
     sizes = np.bincount(lab.ravel())[1:] if n else np.array([])
     return lab, n, sizes, vol
 
@@ -92,10 +92,7 @@ kept0 = qc[qc['exclude_reason'].astype(str).str.strip().isin(["", "nan"])].copy(
 
 rows = []
 for set_name, min_ret in SUBJECT_SETS:
-    print(f"
-{'#'*70}
-# {set_name}  (保留帧>= {min_ret})
-{'#'*70}")
+    print(f"\n{'#'*70}\n# {set_name}  (保留帧>= {min_ret})\n{'#'*70}")
     for seed in FINAL_SEEDS:
         subs, Y = [], []
         for _, r in kept0.iterrows():
@@ -107,8 +104,7 @@ for set_name, min_ret in SUBJECT_SETS:
             subs.append(r); Y.append(v)
         meta = pd.DataFrame(subs).reset_index(drop=True)
         Y = np.asarray(Y, np.float64); g = meta['group'].values.astype(float)
-        print(f"
-=== {seed}  n={len(meta)} (resp {int(g.sum())}/non {int((g==0).sum())}) ===")
+        print(f"\n=== {seed}  n={len(meta)} (resp {int(g.sum())}/non {int((g==0).sum())}) ===")
         for mname, covars in COVAR_MODELS:
             hits, fwec = run_model(Y, g, meta, covars)
             sig = [h for h in hits if h['fwe'] < FWE_ALPHA]
@@ -123,6 +119,5 @@ for set_name, min_ret in SUBJECT_SETS:
 
 pd.DataFrame(rows).to_csv(os.path.join(RESULT_DIR, f"final_significant_clusters_nperm{N_PERM}.csv"),
                           index=False, encoding="utf-8-sig")
-print(f"
-结果已存：{RESULT_DIR}")
+print(f"\n结果已存：{RESULT_DIR}")
 print(f"判读：主分析与敏感性都显著 -> 稳健；FWE<{FWE_ALPHA/N_SEEDS_FAMILY:.4f} 者跨8种子Bonferroni仍成立。")

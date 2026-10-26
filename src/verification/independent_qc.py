@@ -19,6 +19,7 @@ record('state_counts_preserved',d.final_state_code.value_counts().sort_index().t
 x=d.RVPL_SMA_raw.to_numpy();g=d.final_state_code.to_numpy()
 r=stats.spearmanr(x,g).statistic
 record('Spearman_independent_scipy',np.isclose(r,summary['spearman_rho']))
+# JT computed via Mann-Whitney group-pair U statistics, a different implementation.
 J=0.
 for lo in range(4):
     for hi in range(lo+1,4):
@@ -72,6 +73,7 @@ for label,cohort in [('main','main_source_n30'),('strict','strict_source_n27')]:
 null=pd.read_csv(OUT/'05_master_results/predictor_residual_permutation.csv')
 record('new_primary_permutation_5000_attempts',len(null)==5000)
 record('new_primary_permutation_all_converged',null.converged.all())
+# The copied historical archive must agree with the server-data mirror, rather than assuming it does.
 archive_match=[]
 with ZipFile('./restricted_inputs/archive/RVPL_SMA_HISTORICAL_HYPOTHESIS_20260920.zip') as z:
     for p in (OUT/'00_inputs/historical').glob('*.csv'):

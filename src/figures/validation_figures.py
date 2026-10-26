@@ -33,6 +33,7 @@ def prep1():
     return node,diff.index.tolist(),diff.to_numpy(),sig,focus,candidate
 f1.prepare=prep1;f1.FIG=FIG;f1.LOG=QA/'figure1';f1.LOG.mkdir(exist_ok=True)
 f1.LABEL['Auditory']='Auditory / MCC';f1.SHORT['Auditory']='AUD/MCC'
+# This repairs the anatomical label without retrospectively changing node order or features.
 f1.build()
 (FIG/'Figure_1_outcome_guided_identification.pdf').rename(FIG/'Figure_1.pdf')
 (FIG/'Figure_1_outcome_guided_identification.png').rename(FIG/'Figure_1.png')
@@ -55,6 +56,8 @@ exec(compile(src,'figure3_generator','exec'),f3.__dict__);f3.build()
 (FIG/'Figure_3_robustness_anatomical_concentration.pdf').rename(FIG/'Figure_3.pdf')
 (FIG/'Figure_3_robustness_anatomical_concentration.png').rename(FIG/'Figure_3.png')
 
+# Keep every numerical plotted observation, curve and interval unchanged in Fig 2;
+# only the explicitly labelled residual-permutation annotation changes.
 f2.M=FIG
 src=inspect.getsource(f2.main2).split('    for num,stem in ')[0]
 assert 'Residual-permutation P=0.0018' in src
@@ -75,8 +78,7 @@ for row,label in enumerate(['main_primary','strict_primary','RmRt_SMA']):
     axes[row,0].set(xlabel='Expected -log10(P)',ylabel='Observed -log10(P)',title=['Main R-VPL-SMA','Strict R-VPL-SMA','R-mRt-SMA'][row])
     axes[row,1].plot([0,1],[0,1],'--',c='gray',lw=1);axes[row,1].set(xlabel='P value',ylabel='Empirical cumulative probability')
     ss=s[s.alpha==.05];vals=dict(zip(ss.method,ss.type_I_error))
-    axes[row,1].text(.06,.88,f"Rejection at alpha=.05
-Permutation {vals['permutation_p']:.3f}; Wald {vals['wald_p']:.3f}",transform=axes[row,1].transAxes,fontsize=9)
+    axes[row,1].text(.06,.88,f"Rejection at alpha=.05\nPermutation {vals['permutation_p']:.3f}; Wald {vals['wald_p']:.3f}",transform=axes[row,1].transAxes,fontsize=9)
 axes[0,1].legend(loc='lower right',fontsize=9)
 fig.suptitle('Supplementary Figure S6  Null calibration of the fixed-edge procedures',fontweight='bold',fontsize=14)
 fig.text(.5,.017,'2,000 nuisance-only null simulations per design; 5,000 residual permutations per simulation. No candidate-selection step simulated.',ha='center',fontsize=8.5)

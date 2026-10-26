@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Focused R_VPL-SMA validation and robustness analyses."""
+"""Robustness, specificity, and internal prediction audit for historical R-VPL--SMA FC."""
 from pathlib import Path
 import hashlib
 import json
+import sys
 import time
 import warnings
-import sys
 
 import numpy as np
 import pandas as pd
@@ -16,11 +16,10 @@ from sklearn.model_selection import GridSearchCV, RepeatedStratifiedKFold, Strat
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-import os
-ROOT = Path(os.environ.get("RVPL_SMA_PROJECT_ROOT", Path.cwd()))
-BASE = Path(os.environ.get("RVPL_SMA_DISCOVERY_DIR", ROOT / "restricted_inputs" / "discovery_analysis"))
-MRI = ROOT / "restricted_inputs" / "MRI"
-OUT = ROOT / "outputs" / "focused_edge_validation"
+ROOT = Path('./restricted_inputs/legacy_stage2')
+BASE = ROOT / 'CORRECTIVE_AUDIT_20260909'
+OUT = ROOT / 'focused_edge_validation'
+MRI = Path('./restricted_inputs/MRI')
 LOCK = OUT / 'focused_edge_validation_lock.json'
 SEED = 20260920
 PRIMARY = 'R_VPL_SMA_z_local26_z'
