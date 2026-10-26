@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the accompanying article and this software release."
+title: "R_VPL-SMA connectivity analysis code"
+type: software
+version: "1.0.0"
+date-released: "2026-10-26"
+authors:
+  - family-names: "Cui"
+    given-names: "Sheng-Hua"
+  - family-names: "Li"
+    given-names: "Xue-Jun"
+license: MIT
+keywords:
+  - disorders of consciousness
+  - spinal cord stimulation
+  - functional connectivity
+  - thalamus
+  - supplementary motor area
+  - fMRI

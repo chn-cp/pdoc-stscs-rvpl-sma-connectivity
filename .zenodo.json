@@ -1,0 +1,24 @@
+{
+  "title": "R_VPL-SMA connectivity analysis code",
+  "upload_type": "software",
+  "description": "Study-specific code supporting pretreatment R_VPL-SMA functional-connectivity analyses, statistical validation, sensitivity analyses and publication figures in a retrospective cohort of patients with prolonged disorders of consciousness receiving short-term spinal cord stimulation.",
+  "creators": [
+    {
+      "name": "Cui, Sheng-Hua"
+    },
+    {
+      "name": "Li, Xue-Jun"
+    }
+  ],
+  "license": "MIT",
+  "version": "1.0.0",
+  "keywords": [
+    "disorders of consciousness",
+    "spinal cord stimulation",
+    "functional connectivity",
+    "fMRI",
+    "thalamus",
+    "supplementary motor area"
+  ],
+  "access_right": "open"
+}

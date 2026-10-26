@@ -1,0 +1,28 @@
+{
+  "release_version": "1.0.0",
+  "release_date": "2026-10-26",
+  "validated_python": "3.13.13",
+  "validated_packages": {
+    "numpy": "2.5.1",
+    "scipy": "1.18.1",
+    "pandas": "3.0.5",
+    "matplotlib": "3.11.2",
+    "nibabel": "5.4.2",
+    "nilearn": "0.14.1",
+    "statsmodels": "0.15.0"
+  },
+  "additional_dependencies_with_unrecovered_exact_version": [
+    "scikit-learn",
+    "PyMuPDF"
+  ],
+  "external_software": [
+    "FSL (MELODIC/fsl_regfilt; original release number not recovered)"
+  ],
+  "resampling": {
+    "displayed_residual_permutations": 5000,
+    "calibration_simulations_per_checked_design": 2000,
+    "max_statistic_permutations": 10000
+  },
+  "master_seed_for_statistical_validation": 20261023,
+  "notes": "External preprocessing packages and restricted patient inputs are not distributed in this repository."
+}
