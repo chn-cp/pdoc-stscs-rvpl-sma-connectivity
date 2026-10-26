@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Restricted clinical/MRI inputs
+restricted_inputs/*
+!restricted_inputs/README.md
+**/PRIVATE_*
+**/*patient*linkage*
+**/*participant*linkage*
+**/*clinical*identif*
+**/*patient_id*
+**/*mrn*
+
+# Generated outputs and compiled binaries
+outputs/
+bin/
+*.dll
+*.so
+*.dylib
+*.o
+*.obj
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
